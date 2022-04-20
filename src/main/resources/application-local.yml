@@ -1,0 +1,7 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://127.0.0.1:27017/price-compare
+project:
+  jwt:
+    secret: 84a8e8c6-a6d9-40bb-bceb-126d83dbb628
