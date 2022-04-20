@@ -18,7 +18,7 @@ public class Product {
 
     protected String ean;
 
-    protected String reporter;
+    protected User reporter;
 
     protected AudiMetadata audit;
 }

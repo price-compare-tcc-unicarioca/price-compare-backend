@@ -35,15 +35,6 @@ public class CompanyController {
                 .body(new ResponseError("Company already exists"));
     }
 
-    @GetMapping
-    protected ResponseEntity<Page<Company>> listCompany(@PageableDefault() Pageable pageable) {
-        var companies = repository.findAll(pageable);
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(companies);
-    }
-
     @PostMapping
     protected ResponseEntity<Company> createCompany(@Valid @RequestBody NewCompany request)
             throws CompanyAlreadyExistsException {
