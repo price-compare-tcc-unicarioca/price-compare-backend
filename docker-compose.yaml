@@ -6,3 +6,13 @@ services:
       - "27017:27017"
     environment:
       - MONGO_INITDB_DATABASE=price-compare
+  application:
+    image: gradle:7.3-jdk17-alpine
+    working_dir: /app
+    command: "gradle bootRun --args='--spring.profiles.active=docker'"
+    volumes:
+      - .:/app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database

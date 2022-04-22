@@ -1,6 +1,7 @@
 package info.merorafael.pricecompare.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import info.merorafael.pricecompare.data.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,6 +40,8 @@ public class User implements UserDetails {
 
     @JsonIgnore
     protected String password;
+
+    protected List<Role> roles = Collections.emptyList();
 
     @DBRef
     protected List<Company> companies = Collections.emptyList();

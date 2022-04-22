@@ -1,4 +1,14 @@
 spring:
+  application:
+    name: Price Compare API
   data:
     mongodb:
       auto-index-creation: true
+springdoc:
+  show-login-endpoint: true
+  swagger-ui:
+    disable-swagger-default-url: true
+    use-root-path: true
+    path: /docs/index.html
+  api-docs:
+    path: /docs/swagger.json

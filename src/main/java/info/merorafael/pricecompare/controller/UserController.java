@@ -8,6 +8,8 @@ import info.merorafael.pricecompare.entity.User;
 import info.merorafael.pricecompare.exception.UserAlreadyExistsException;
 import info.merorafael.pricecompare.repository.UserRepository;
 import info.merorafael.pricecompare.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -41,6 +43,7 @@ public class UserController {
     }
 
     @PostMapping("/signup")
+    @Operation(summary = "Create a new user(signup)")
     public ResponseEntity<User> signup(@Valid @RequestBody UserSignup request) throws UserAlreadyExistsException {
         var optionalUser = repository.findByEmail(request.getEmail());
         if (optionalUser.isPresent()) {
@@ -53,6 +56,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
+    @Operation(summary = "Get an access token for a valid User credentials")
     public ResponseEntity<AccessToken> login(@Valid @RequestBody UserLogin request) {
         var authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -68,7 +72,16 @@ public class UserController {
         );
     }
 
+    @PostMapping("/renew")
+    @Operation(summary = "Get a renewed access token", security = @SecurityRequirement(name = "jwtAuth"))
+    public ResponseEntity<AccessToken> renewToken() {
+        return ResponseEntity.status(HttpStatus.OK).body(
+            authService.createToken(authService.getUser())
+        );
+    }
+
     @GetMapping("/info")
+    @Operation(summary = "Get the logged user info", security = @SecurityRequirement(name = "jwtAuth"))
     public ResponseEntity<User> info() {
         return ResponseEntity.status(HttpStatus.OK).body(authService.getUser());
     }

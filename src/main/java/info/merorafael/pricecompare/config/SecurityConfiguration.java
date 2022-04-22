@@ -48,6 +48,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/user/signup").permitAll()
                 .antMatchers(HttpMethod.POST, "/user/login").permitAll()
                 .antMatchers("/actuator/**").permitAll()
+                .antMatchers("/docs/swagger-ui/**").permitAll()
+                .antMatchers("/docs/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
             .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
