@@ -1,6 +1,5 @@
 package info.merorafael.pricecompare.controller;
 
-import info.merorafael.pricecompare.data.enums.ProductState;
 import info.merorafael.pricecompare.data.request.NewProduct;
 import info.merorafael.pricecompare.data.response.ResponseError;
 import info.merorafael.pricecompare.entity.Product;
@@ -73,16 +72,8 @@ public class ProductController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a specific product", security = @SecurityRequirement(name = "jwtAuth"))
     protected ResponseEntity<Object> deleteProduct(@PathVariable("id") String productId)
-            throws ProductNotFoundException, ProductCannotDeletedException {
+            throws ProductNotFoundException {
         var product = repository.findById(productId).orElseThrow(ProductNotFoundException::new);
-        if (product.getState().equals(ProductState.ACCEPTED)) {
-            throw new ProductCannotDeletedException(String.format(
-                "Product '%s' cannot be deleted because this product state is '%s'",
-                product.getId(),
-                product.getState()
-            ));
-        }
-
         repository.delete(product);
 
         return ResponseEntity.status(HttpStatus.OK).build();

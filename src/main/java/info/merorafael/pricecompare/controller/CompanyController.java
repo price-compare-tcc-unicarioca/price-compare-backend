@@ -1,5 +1,6 @@
 package info.merorafael.pricecompare.controller;
 
+import info.merorafael.pricecompare.data.LocationPoint;
 import info.merorafael.pricecompare.data.request.EditCompany;
 import info.merorafael.pricecompare.data.request.NewCompany;
 import info.merorafael.pricecompare.data.response.ResponseError;
@@ -10,11 +11,14 @@ import info.merorafael.pricecompare.repository.CompanyRepository;
 import info.merorafael.pricecompare.service.CompanyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import org.springframework.data.geo.Distance;
+import org.springframework.data.geo.Metrics;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/company")
@@ -39,6 +43,14 @@ public class CompanyController {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ResponseError("Company not found"));
+    }
+
+    @GetMapping
+    @Operation(summary = "List companies", security = @SecurityRequirement(name = "jwtAuth"))
+    protected ResponseEntity<List<Company>> listNear(@Valid LocationPoint point) {
+        var nearCompanies = repository.findByPointNear(point.toGeoJsonPoint(), new Distance(2, Metrics.KILOMETERS));
+
+        return ResponseEntity.status(HttpStatus.OK).body(nearCompanies);
     }
 
     @PostMapping
