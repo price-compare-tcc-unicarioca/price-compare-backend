@@ -1,0 +1,273 @@
+{
+	"info": {
+		"_postman_id": "86d265f2-2e77-4871-9941-d9105ab101dc",
+		"name": "Price Compare",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Company",
+			"item": [
+				{
+					"name": "New Company",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Guanabara Piedade\",\n    \"document\": \"70953930000145\",\n    \"address\": {\n        \"streetAddress\": \"Av. Dom Hélder Câmara, 8403 - Piedade\",\n        \"postalCode\": \"20751-001\",\n        \"city\": \"Rio de Janeiro\",\n        \"state\": \"RJ\"\n    },\n    \"point\": {\n        \"longitude\": -22.8864192,\n        \"latitude\": -43.3106958\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8080/company",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"company"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Companies",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Sale",
+			"item": [
+				{
+					"name": "Import Sheet",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"SaleSheet.xlsx\",\n    \"contentType\": \"blah\",\n    \"base64\": \"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\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8080/sale/import",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"sale",
+								"import"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search Near",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8080/sale/search?longitude&latitude",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"sale",
+								"search"
+							],
+							"query": [
+								{
+									"key": "longitude",
+									"value": null
+								},
+								{
+									"key": "latitude",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Signup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstName\": \"Rafael\",\n    \"lastName\": \"Silva\",\n    \"email\": \"merorafael@gmail.com\",\n    \"password\": \"656565\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8080/user/signup",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"user",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test('Success authentication', () => {",
+							"    pm.response.to.have.status(200);",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"var response = pm.response.json();",
+							"pm.collectionVariables.set(\"authToken\", response.token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"merorafael@gmail.com\",\n    \"password\": \"656565\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8080/user/login",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User Info",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{authToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8080/user/info",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"user",
+						"info"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "authToken",
+			"value": ""
+		}
+	]
+}
