@@ -15,7 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Metrics;
-import org.springframework.data.geo.format.DistanceFormatter;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -48,7 +47,7 @@ public class SaleService {
         var companies = companyRepository
                 .findByPointNear(searchCriteria.toGeoJsonPoint(), new Distance(2, Metrics.KILOMETERS));
 
-        return saleRepository.findByProductIdAndCompanyIn(
+        return saleRepository.findByProductIdAndCompanyInOrderByPrice(
                 product.getId(),
                 companies,
                 pageable

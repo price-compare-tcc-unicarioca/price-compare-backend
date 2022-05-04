@@ -9,7 +9,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import java.util.List;
 
 public interface SaleRepository extends PagingAndSortingRepository<Sale, String> {
-    Page<Sale> findByProductIdAndCompanyIn(
+    Page<Sale> findByProductIdAndCompanyInOrderByPrice(
             String productId,
             List<Company> companies,
             Pageable pageable
