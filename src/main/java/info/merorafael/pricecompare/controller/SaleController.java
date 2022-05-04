@@ -8,6 +8,8 @@ import info.merorafael.pricecompare.exception.ProductNotFoundException;
 import info.merorafael.pricecompare.repository.ProductRepository;
 import info.merorafael.pricecompare.repository.SaleRepository;
 import info.merorafael.pricecompare.service.SaleService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -37,6 +39,7 @@ public class SaleController {
     }
 
     @GetMapping("/search")
+    @Operation(summary = "Get a page of near product sale", security = @SecurityRequirement(name = "jwtAuth"))
     public ResponseEntity<Page<Sale>> searchNear(@PageableDefault() Pageable pageable, @Valid SearchSaleNear request)
             throws ProductNotFoundException {
         var sales = service.searchNear(request, pageable);
@@ -47,6 +50,7 @@ public class SaleController {
     }
 
     @PostMapping("/import")
+    @Operation(summary = "Import a XLSX file with sale list", security = @SecurityRequirement(name = "jwtAuth"))
     public ResponseEntity<List<Sale>> importList(@Valid @RequestBody Base64File base64File)
             throws IOException, CompanyNotFoundException {
         var sales = service.importSheet(base64File);
