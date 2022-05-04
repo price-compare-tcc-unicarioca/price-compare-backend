@@ -1,15 +1,21 @@
 package info.merorafael.pricecompare.service;
 
 import info.merorafael.pricecompare.data.request.Base64File;
+import info.merorafael.pricecompare.data.request.SearchSaleNear;
 import info.merorafael.pricecompare.entity.Product;
 import info.merorafael.pricecompare.entity.Sale;
 import info.merorafael.pricecompare.exception.CompanyNotFoundException;
+import info.merorafael.pricecompare.exception.ProductNotFoundException;
 import info.merorafael.pricecompare.repository.CompanyRepository;
 import info.merorafael.pricecompare.repository.ProductRepository;
 import info.merorafael.pricecompare.repository.SaleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.slf4j.Logger;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.geo.Distance;
+import org.springframework.data.geo.Metrics;
+import org.springframework.data.geo.format.DistanceFormatter;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -32,6 +38,21 @@ public class SaleService {
         this.companyRepository = companyRepository;
         this.productRepository = productRepository;
         this.saleRepository = saleRepository;
+    }
+
+    public Page<Sale> searchNear(SearchSaleNear searchCriteria, Pageable pageable) throws ProductNotFoundException {
+        var product = productRepository
+                .findByEan(searchCriteria.getEan())
+                .orElseThrow(ProductNotFoundException::new);
+
+        var companies = companyRepository
+                .findByPointNear(searchCriteria.toGeoJsonPoint(), new Distance(2, Metrics.KILOMETERS));
+
+        return saleRepository.findByProductIdAndCompanyIn(
+                product.getId(),
+                companies,
+                pageable
+        );
     }
 
     public List<Sale> importSheet(Base64File file) throws IOException, CompanyNotFoundException {

@@ -1,21 +1,19 @@
 package info.merorafael.pricecompare.repository;
 
+import info.merorafael.pricecompare.entity.Company;
 import info.merorafael.pricecompare.entity.Sale;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface SaleRepository extends PagingAndSortingRepository<Sale, String> {
-    Page<Sale> findByProductEanAndCompanyPointNear(
-            String productEan,
-            GeoJsonPoint point,
+    Page<Sale> findByProductIdAndCompanyIn(
+            String productId,
+            List<Company> companies,
             Pageable pageable
     );
 
     void deleteAllByCompanyId(String companyId);
-
-    Optional<Sale> findByCompanyIdAndProductEan(String companyId, String productEan);
 }

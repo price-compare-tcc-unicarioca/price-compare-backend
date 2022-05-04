@@ -6,10 +6,13 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class RequestSaleNear extends LocationPoint {
+public class SearchSaleNear extends LocationPoint {
+    @NotNull
     protected String ean;
 }
