@@ -42,7 +42,7 @@ public class UserController {
                 .body(new ResponseError("User already exists"));
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/sign-up")
     @Operation(summary = "Create a new user(signup)")
     public ResponseEntity<User> signup(@Valid @RequestBody UserSignup request) throws UserAlreadyExistsException {
         var optionalUser = repository.findByEmail(request.getEmail());
@@ -55,7 +55,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 
-    @PostMapping("/login")
+    @PostMapping("/sign-in")
     @Operation(summary = "Get an access token for a valid User credentials")
     public ResponseEntity<AccessToken> login(@Valid @RequestBody UserLogin request) {
         var authentication = authenticationManager.authenticate(
@@ -80,7 +80,7 @@ public class UserController {
         );
     }
 
-    @GetMapping("/info")
+    @GetMapping("/current")
     @Operation(summary = "Get the logged user info", security = @SecurityRequirement(name = "jwtAuth"))
     public ResponseEntity<User> info() {
         return ResponseEntity.status(HttpStatus.OK).body(authService.getUser());
