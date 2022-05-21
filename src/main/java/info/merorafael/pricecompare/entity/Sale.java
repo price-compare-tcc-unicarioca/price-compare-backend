@@ -1,5 +1,6 @@
 package info.merorafael.pricecompare.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,12 +17,12 @@ import java.math.BigDecimal;
 @Document
 public class Sale {
     @DBRef
-    protected Company company;
+    private Company company;
 
     @DBRef
-    protected Product product;
+    private Product product;
 
-    protected BigDecimal price;
+    private BigDecimal price;
 
-    protected AudiMetadata audit = new AudiMetadata();
+    private AudiMetadata audit = new AudiMetadata();
 }

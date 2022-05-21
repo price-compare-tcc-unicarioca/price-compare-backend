@@ -15,12 +15,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 public class Product {
     @Id
-    protected String id;
+    private String id;
 
-    protected String name;
+    private String name;
 
     @Indexed(unique = true)
-    protected String ean;
+    private String ean;
 
-    protected AudiMetadata audit = new AudiMetadata();
+    private AudiMetadata audit = new AudiMetadata();
 }

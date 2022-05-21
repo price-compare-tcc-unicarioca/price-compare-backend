@@ -29,28 +29,26 @@ public class User implements UserDetails {
     private static final long serialVersionUID = -1553103627435916489L;
 
     @Id
-    protected String id;
+    private String id;
 
-    protected String firstName;
+    private String firstName;
 
-    protected String lastName;
+    private String lastName;
 
     @Indexed(unique = true)
-    protected String email;
+    private String email;
 
     @JsonIgnore
-    protected String password;
+    private String password;
 
-    protected List<Role> roles = Collections.emptyList();
+    private List<Role> roles = Collections.emptyList();
 
-    @DBRef
-    protected List<Company> companies = Collections.emptyList();
-
-    protected AudiMetadata audit = new AudiMetadata();
+    private AudiMetadata audit = new AudiMetadata();
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+        return roles;
     }
 
     @Override

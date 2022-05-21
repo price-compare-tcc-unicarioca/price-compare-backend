@@ -13,19 +13,20 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/user")
-public class UserController {
+@RequestMapping("/auth")
+public class AuthController {
     protected final UserRepository repository;
     protected final AuthService authService;
     protected final AuthenticationManager authenticationManager;
 
-    public UserController(
+    public AuthController(
             UserRepository repository,
             AuthService authService,
             AuthenticationManager authenticationManager
@@ -39,7 +40,14 @@ public class UserController {
     ResponseEntity<ResponseError> handleUserException(UserAlreadyExistsException e) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(new ResponseError("User already exists"));
+                .body(new ResponseError("E-mail already exists"));
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    ResponseEntity<ResponseError> handleUserException(AuthenticationException e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ResponseError("Invalid e-mail and/or password"));
     }
 
     @PostMapping("/sign-up")
@@ -57,7 +65,7 @@ public class UserController {
 
     @PostMapping("/sign-in")
     @Operation(summary = "Get an access token for a valid User credentials")
-    public ResponseEntity<AccessToken> login(@Valid @RequestBody UserLogin request) {
+    public ResponseEntity<AccessToken> login(@Valid @RequestBody UserLogin request) throws AuthenticationException {
         var authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -68,7 +76,7 @@ public class UserController {
         var user = (User) authentication.getPrincipal();
 
         return ResponseEntity.status(HttpStatus.OK).body(
-            authService.createToken(user)
+                authService.createToken(user)
         );
     }
 
@@ -76,7 +84,7 @@ public class UserController {
     @Operation(summary = "Get a renewed access token", security = @SecurityRequirement(name = "jwtAuth"))
     public ResponseEntity<AccessToken> renewToken() {
         return ResponseEntity.status(HttpStatus.OK).body(
-            authService.createToken(authService.getUser())
+                authService.createToken(authService.getUser())
         );
     }
 

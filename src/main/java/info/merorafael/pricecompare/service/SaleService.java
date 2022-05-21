@@ -2,6 +2,7 @@ package info.merorafael.pricecompare.service;
 
 import info.merorafael.pricecompare.data.request.Base64File;
 import info.merorafael.pricecompare.data.request.SearchSaleNear;
+import info.merorafael.pricecompare.data.response.SaleNearResponse;
 import info.merorafael.pricecompare.entity.Product;
 import info.merorafael.pricecompare.entity.Sale;
 import info.merorafael.pricecompare.exception.CompanyNotFoundException;
@@ -11,8 +12,6 @@ import info.merorafael.pricecompare.repository.ProductRepository;
 import info.merorafael.pricecompare.repository.SaleRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Metrics;
 import org.springframework.stereotype.Service;
@@ -25,33 +24,37 @@ import java.util.List;
 @Slf4j
 @Service
 public class SaleService {
+    protected final AuthService authService;
     protected final CompanyRepository companyRepository;
     protected final ProductRepository productRepository;
     protected final SaleRepository saleRepository;
 
     public SaleService(
+            AuthService authService,
             CompanyRepository companyRepository,
             ProductRepository productRepository,
             SaleRepository saleRepository
     ) {
+        this.authService = authService;
         this.companyRepository = companyRepository;
         this.productRepository = productRepository;
         this.saleRepository = saleRepository;
     }
 
-    public Page<Sale> searchNear(SearchSaleNear searchCriteria, Pageable pageable) throws ProductNotFoundException {
+    public SaleNearResponse searchNear(SearchSaleNear searchCriteria) throws ProductNotFoundException {
         var product = productRepository
                 .findByEan(searchCriteria.getEan())
                 .orElseThrow(ProductNotFoundException::new);
 
         var companies = companyRepository
-                .findByPointNear(searchCriteria.toGeoJsonPoint(), new Distance(2, Metrics.KILOMETERS));
+                .findByPointNear(searchCriteria.toGeoJsonPoint(), new Distance(6, Metrics.KILOMETERS));
 
-        return saleRepository.findByProductIdAndCompanyInOrderByPrice(
+        var sales = saleRepository.findByProductIdAndCompanyInOrderByPrice(
                 product.getId(),
-                companies,
-                pageable
+                companies
         );
+
+        return new SaleNearResponse(product, sales);
     }
 
     public List<Sale> importSheet(Base64File file) throws IOException, CompanyNotFoundException {
@@ -64,6 +67,10 @@ public class SaleService {
             var company = companyRepository
                     .findByDocument(companyDocument)
                     .orElseThrow(CompanyNotFoundException::new);
+
+            if (!company.hasPermissionToChange(authService.getUser())) {
+                throw new CompanyNotFoundException();
+            }
 
             saleRepository.deleteAllByCompanyId(company.getId());
 

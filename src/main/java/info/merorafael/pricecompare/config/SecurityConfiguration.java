@@ -19,8 +19,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import java.util.List;
-
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
@@ -45,8 +43,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
             .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/user/sign-up").permitAll()
-                .antMatchers(HttpMethod.POST, "/user/sign-in").permitAll()
+                .antMatchers(HttpMethod.POST, "/auth/sign-up").permitAll()
+                .antMatchers(HttpMethod.POST, "/auth/sign-in").permitAll()
+                .antMatchers(HttpMethod.GET, "/sale/search").permitAll()
                 .antMatchers("/actuator/**").permitAll()
                 .antMatchers("/docs/swagger-ui/**").permitAll()
                 .antMatchers("/docs/**").permitAll()

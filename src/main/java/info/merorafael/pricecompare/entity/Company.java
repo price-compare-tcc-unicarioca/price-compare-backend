@@ -12,30 +12,34 @@ import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.io.Serial;
-import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
 @Document
-public class Company implements Serializable {
-    @Serial
-    private static final long serialVersionUID = -4075803080902016893L;
-
+public class Company {
     @Id
-    protected String id;
+    private String id;
 
-    protected String name;
+    private String name;
 
     @Indexed(unique = true)
-    protected String document;
+    private String document;
 
-    protected Address address;
+    private Address address;
 
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
-    protected GeoJsonPoint point;
+    private GeoJsonPoint point;
 
-    protected AudiMetadata audit = new AudiMetadata();
+    private List<CompanyUser> users = Collections.emptyList();
+
+    private AudiMetadata audit = new AudiMetadata();
+
+    public boolean hasPermissionToChange(User user) {
+        return users.stream()
+                .anyMatch(companyUser -> companyUser.getUser().getId().equals(user.getId()));
+    }
 }
