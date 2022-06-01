@@ -47,7 +47,7 @@ public class SaleService {
                 .orElseThrow(ProductNotFoundException::new);
 
         var companies = companyRepository
-                .findByPointNear(searchCriteria.toGeoJsonPoint(), new Distance(6, Metrics.KILOMETERS));
+                .findByPointNear(searchCriteria.toGeoJsonPoint(), new Distance(2, Metrics.KILOMETERS));
 
         var sales = saleRepository.findByProductIdAndCompanyInOrderByPrice(
                 product.getId(),
