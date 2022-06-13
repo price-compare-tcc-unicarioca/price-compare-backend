@@ -2,9 +2,9 @@ package info.merorafael.pricecompare.controller;
 
 import info.merorafael.pricecompare.data.request.Base64File;
 import info.merorafael.pricecompare.data.request.SearchSaleNear;
+import info.merorafael.pricecompare.data.response.ImportedSheet;
 import info.merorafael.pricecompare.data.response.ResponseError;
 import info.merorafael.pricecompare.data.response.SaleNearResponse;
-import info.merorafael.pricecompare.entity.Sale;
 import info.merorafael.pricecompare.exception.CompanyNotFoundException;
 import info.merorafael.pricecompare.exception.InvalidSheetDataException;
 import info.merorafael.pricecompare.exception.ProductNotFoundException;
@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/sale")
@@ -58,12 +57,12 @@ public class SaleController {
 
     @PostMapping("/import")
     @Operation(summary = "Import a XLSX file with sale list", security = @SecurityRequirement(name = "jwtAuth"))
-    public ResponseEntity<List<Sale>> importList(@Valid @RequestBody Base64File base64File)
+    public ResponseEntity<ImportedSheet> importList(@Valid @RequestBody Base64File base64File)
             throws IOException, CompanyNotFoundException, InvalidSheetDataException {
-        var sales = service.importSheet(base64File);
+        var importedSheet = service.importSheet(base64File);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(sales);
+                .body(importedSheet);
     }
 }

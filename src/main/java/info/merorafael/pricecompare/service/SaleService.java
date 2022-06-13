@@ -2,6 +2,7 @@ package info.merorafael.pricecompare.service;
 
 import info.merorafael.pricecompare.data.request.Base64File;
 import info.merorafael.pricecompare.data.request.SearchSaleNear;
+import info.merorafael.pricecompare.data.response.ImportedSheet;
 import info.merorafael.pricecompare.data.response.SaleNearResponse;
 import info.merorafael.pricecompare.entity.Product;
 import info.merorafael.pricecompare.entity.Sale;
@@ -58,8 +59,9 @@ public class SaleService {
         return new SaleNearResponse(product, sales);
     }
 
-    public List<Sale> importSheet(Base64File file)
+    public ImportedSheet importSheet(Base64File file)
             throws IOException, CompanyNotFoundException, InvalidSheetDataException {
+        var importedSheet = new ImportedSheet();
         var sales = new ArrayList<Sale>();
 
         try (var workbook = WorkbookFactory.create(file.getInputStream())) {
@@ -73,6 +75,8 @@ public class SaleService {
             if (!company.hasPermissionToChange(authService.getUser())) {
                 throw new CompanyNotFoundException();
             }
+
+            importedSheet.setCompany(company);
 
             saleRepository.deleteAllByCompanyId(company.getId());
 
@@ -99,8 +103,10 @@ public class SaleService {
                     throw new InvalidSheetDataException(String.format("Invalid data inputted on line %d", i+1));
                 }
             }
+
+            importedSheet.setSales(sales);
         }
 
-        return sales;
+        return importedSheet;
     }
 }
