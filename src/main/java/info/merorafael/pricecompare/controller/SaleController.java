@@ -2,9 +2,11 @@ package info.merorafael.pricecompare.controller;
 
 import info.merorafael.pricecompare.data.request.Base64File;
 import info.merorafael.pricecompare.data.request.SearchSaleNear;
+import info.merorafael.pricecompare.data.response.ResponseError;
 import info.merorafael.pricecompare.data.response.SaleNearResponse;
 import info.merorafael.pricecompare.entity.Sale;
 import info.merorafael.pricecompare.exception.CompanyNotFoundException;
+import info.merorafael.pricecompare.exception.InvalidSheetDataException;
 import info.merorafael.pricecompare.exception.ProductNotFoundException;
 import info.merorafael.pricecompare.repository.ProductRepository;
 import info.merorafael.pricecompare.repository.SaleRepository;
@@ -36,6 +38,13 @@ public class SaleController {
         this.service = service;
     }
 
+    @ExceptionHandler(InvalidSheetDataException.class)
+    ResponseEntity<ResponseError> handleSaleException(InvalidSheetDataException e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ResponseError(e.getMessage()));
+    }
+
     @GetMapping("/search")
     @Operation(summary = "Get a page of near product sale", security = @SecurityRequirement(name = "jwtAuth"))
     public ResponseEntity<SaleNearResponse> searchNear(@Valid SearchSaleNear request)
@@ -50,7 +59,7 @@ public class SaleController {
     @PostMapping("/import")
     @Operation(summary = "Import a XLSX file with sale list", security = @SecurityRequirement(name = "jwtAuth"))
     public ResponseEntity<List<Sale>> importList(@Valid @RequestBody Base64File base64File)
-            throws IOException, CompanyNotFoundException {
+            throws IOException, CompanyNotFoundException, InvalidSheetDataException {
         var sales = service.importSheet(base64File);
 
         return ResponseEntity

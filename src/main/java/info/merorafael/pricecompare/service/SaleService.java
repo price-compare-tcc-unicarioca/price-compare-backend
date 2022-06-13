@@ -6,6 +6,7 @@ import info.merorafael.pricecompare.data.response.SaleNearResponse;
 import info.merorafael.pricecompare.entity.Product;
 import info.merorafael.pricecompare.entity.Sale;
 import info.merorafael.pricecompare.exception.CompanyNotFoundException;
+import info.merorafael.pricecompare.exception.InvalidSheetDataException;
 import info.merorafael.pricecompare.exception.ProductNotFoundException;
 import info.merorafael.pricecompare.repository.CompanyRepository;
 import info.merorafael.pricecompare.repository.ProductRepository;
@@ -57,7 +58,8 @@ public class SaleService {
         return new SaleNearResponse(product, sales);
     }
 
-    public List<Sale> importSheet(Base64File file) throws IOException, CompanyNotFoundException {
+    public List<Sale> importSheet(Base64File file)
+            throws IOException, CompanyNotFoundException, InvalidSheetDataException {
         var sales = new ArrayList<Sale>();
 
         try (var workbook = WorkbookFactory.create(file.getInputStream())) {
@@ -76,21 +78,25 @@ public class SaleService {
 
             var rows = sheet.getLastRowNum();
             for (int i = 5; i < rows; i++) {
-                var ean = sheet.getRow(i).getCell(0).getStringCellValue().trim();
-                var productName = sheet.getRow(i).getCell(1).getStringCellValue().trim();
-                var price = sheet.getRow(i).getCell(2).getNumericCellValue();
-                if (!ean.isEmpty() && price > 0) {
-                    var optionalProduct = productRepository.findByEan(ean);
-                    var product = optionalProduct.isEmpty()
-                            ? productRepository.save(new Product().setName(productName).setEan(ean))
-                            : optionalProduct.get();
+                try {
+                    var ean = sheet.getRow(i).getCell(0).getStringCellValue().trim();
+                    var productName = sheet.getRow(i).getCell(1).getStringCellValue().trim();
+                    var price = sheet.getRow(i).getCell(2).getNumericCellValue();
+                    if (!ean.isEmpty() && price > 0) {
+                        var optionalProduct = productRepository.findByEan(ean);
+                        var product = optionalProduct.isEmpty()
+                                ? productRepository.save(new Product().setName(productName).setEan(ean))
+                                : optionalProduct.get();
 
-                    sales.add(saleRepository.save(
-                            new Sale()
-                                    .setProduct(product)
-                                    .setCompany(company)
-                                    .setPrice(BigDecimal.valueOf(price))
-                    ));
+                        sales.add(saleRepository.save(
+                                new Sale()
+                                        .setProduct(product)
+                                        .setCompany(company)
+                                        .setPrice(BigDecimal.valueOf(price))
+                        ));
+                    }
+                } catch (IllegalStateException e) {
+                    throw new InvalidSheetDataException(String.format("Invalid data inputted on line %d", i+1));
                 }
             }
         }
