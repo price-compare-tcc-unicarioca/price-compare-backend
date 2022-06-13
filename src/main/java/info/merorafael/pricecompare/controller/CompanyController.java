@@ -40,13 +40,6 @@ public class CompanyController {
                 .body(new ResponseError("Company already exists"));
     }
 
-    @ExceptionHandler(CompanyNotFoundException.class)
-    ResponseEntity<ResponseError> handleCompanyException(CompanyNotFoundException e) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(new ResponseError("Company not found"));
-    }
-
     @GetMapping
     @Operation(summary = "List companies", security = @SecurityRequirement(name = "jwtAuth"))
     protected ResponseEntity<List<Company>> list() {
